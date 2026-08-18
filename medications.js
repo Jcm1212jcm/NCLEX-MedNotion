@@ -338,6 +338,18 @@ const MEDICATIONS = [
     trap: "<strong>Dehydration, low-sodium diets, and NSAIDs/diuretics</strong> sharply spike lithium levels. Never restrict dietary salt."
   },
   {
+    generic: "Lamotrigine",
+    brand: "(Lamictal)",
+    category: "neuro",
+    drugClass: "Anticonvulsant / Mood Stabilizer",
+    indication: "Seizure Disorders; Maintenance Treatment of Bipolar I Disorder",
+    assess: "Assess for <strong>new rash, mucosal sores, fever, or systemic symptoms</strong>; verify the prescribed titration schedule and interacting drugs such as valproate.",
+    monitor: "Monitor mood/suicidality, seizure control, and for hypersensitivity or multiorgan reactions. Dose adjustments are required with important interacting anticonvulsants.",
+    watch: "<strong>Serious skin reactions (SJS/TEN)</strong> can occur, especially with rapid titration or valproate. Teach patients to report any rash promptly and not to stop or restart on their own.",
+    antidote: null,
+    trap: "<strong>Boxed warning: life-threatening rash.</strong> Start low and titrate slowly; valproate increases lamotrigine exposure and rash risk. A medication stopped long enough may need re-titration rather than resuming the old dose.",
+  },
+  {
     generic: "Lorazepam",
     brand: "(Ativan)",
     category: "neuro",
