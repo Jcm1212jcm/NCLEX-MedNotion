@@ -350,6 +350,18 @@ const MEDICATIONS = [
     trap: "<strong>Boxed warning: life-threatening rash.</strong> Start low and titrate slowly; valproate increases lamotrigine exposure and rash risk. A medication stopped long enough may need re-titration rather than resuming the old dose.",
   },
   {
+    generic: "Naltrexone Hydrochloride",
+    brand: "(ReVia)",
+    category: "neuro",
+    drugClass: "Opioid Receptor Antagonist",
+    indication: "Alcohol Dependence; Blockade of Exogenous Opioid Effects After Detoxification",
+    assess: "Verify <strong>no current opioid use or acute opioid withdrawal</strong> before starting; assess recent opioid/tramadol use and baseline liver status.",
+    monitor: "Monitor liver injury symptoms/enzymes as clinically indicated, mood/suicidality, and relapse risk. Opioid analgesics may be ineffective while blockade is active.",
+    watch: "Can precipitate <strong>severe opioid withdrawal</strong>. Patients previously dependent on short-acting opioids should generally be opioid-free for at least <strong>7–10 days</strong>; methadone/buprenorphine transitions may require longer.",
+    antidote: null,
+    trap: "<strong>Do NOT give to an opioid-dependent patient.</strong> Naltrexone can trigger abrupt, severe withdrawal; after stopping it, reduced opioid tolerance increases overdose risk if relapse occurs."
+  },
+  {
     generic: "Lorazepam",
     brand: "(Ativan)",
     category: "neuro",
