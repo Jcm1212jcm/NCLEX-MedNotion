@@ -418,6 +418,18 @@ const MEDICATIONS = [
   // 7. GI, ELECTROLYTES & PAIN
   // =========================================================================
   {
+    generic: "Hydrocodone / Acetaminophen",
+    brand: "(Norco)",
+    category: "gi",
+    drugClass: "Opioid Analgesic + Non-Opioid Analgesic (Schedule II)",
+    indication: "Pain Severe Enough to Require an Opioid When Alternatives Are Inadequate",
+    assess: "Assess <strong>respiratory rate, sedation level, pain, and blood pressure</strong> before administration; follow ordered hold parameters.",
+    monitor: "Respiratory status, level of consciousness, bowel function, and <strong>total daily acetaminophen from ALL products</strong>.",
+    watch: "<strong>Respiratory depression and profound sedation</strong>; avoid alcohol/benzodiazepines or other CNS depressants unless specifically directed. Acetaminophen excess can cause severe liver injury.",
+    antidote: "Naloxone (opioid component); N-acetylcysteine for acetaminophen overdose",
+    trap: "Combination-product trap: count <strong>all acetaminophen sources</strong>. Hydrocodone is Schedule II; overdose risk is respiratory depression, while APAP toxicity can cause acute liver failure."
+  },
+  {
     generic: "Morphine Sulfate",
     brand: "(MS Contin, Duramorph)",
     category: "gi",
