@@ -9,6 +9,9 @@
        EDITORIAL CLINICAL STUDY GUIDE THEME & MUTED PALETTE
        ========================================================================= */
     :root {
+      color-scheme: light;
+      --embed-bg: transparent;
+
       /* Typography */
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", sans-serif;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -91,6 +94,8 @@
     /* Coherent Muted Warm Dark Mode */
     @media (prefers-color-scheme: dark) {
       :root {
+        color-scheme: dark;
+        --embed-bg: #191919;
         --bg-surface: #23211f;
         --bg-subtle: #2b2825;
         --bg-hover: #37332f;
@@ -166,8 +171,9 @@
 
     html, body {
       width: 100%;
-      background: transparent;
+      background: var(--embed-bg);
       overflow-x: hidden;
+      scrollbar-color: var(--text-subtle) var(--embed-bg);
     }
 
     body {
