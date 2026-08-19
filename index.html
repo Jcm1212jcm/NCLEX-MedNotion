@@ -331,6 +331,11 @@
       box-shadow: 0 0 0 1px var(--status-review-border);
     }
 
+    .status-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
     .card-counter {
       font-size: 0.67rem;
       font-family: var(--font-mono);
@@ -509,6 +514,108 @@
       font-weight: 700;
     }
 
+    /* Scrollable category medication browser */
+    .drug-browser {
+      display: none;
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .drug-browser-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      background-color: var(--bg-subtle);
+    }
+
+    .drug-browser-title {
+      font-size: 0.72rem;
+      font-weight: 750;
+      color: var(--text-main);
+      letter-spacing: 0.01em;
+    }
+
+    .drug-browser-close {
+      font-family: var(--font-family);
+      font-size: 0.68rem;
+      font-weight: 650;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 2px 3px;
+    }
+
+    .drug-list {
+      max-height: 270px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-color: var(--text-subtle) var(--bg-subtle);
+    }
+
+    .drug-list-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border: none;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.12s ease;
+    }
+
+    .drug-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .drug-list-item:hover,
+    .drug-list-item:focus {
+      background-color: var(--bg-hover);
+      outline: none;
+    }
+
+    .drug-list-main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .drug-list-name {
+      font-size: 0.79rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .drug-list-meta {
+      font-size: 0.67rem;
+      color: var(--text-muted);
+      line-height: 1.25;
+    }
+
+    .drug-list-status {
+      flex-shrink: 0;
+      font-size: 0.64rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .drug-browser-empty {
+      padding: 20px 10px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.76rem;
+    }
+
     /* 4. Footer Controls Toolbar */
     .widget-footer {
       display: flex;
@@ -647,6 +754,15 @@
       </div>
     </header>
 
+    <!-- Scrollable Category Medication Browser -->
+    <section class="drug-browser" id="drugBrowser" aria-label="Medication list">
+      <div class="drug-browser-header">
+        <span class="drug-browser-title" id="drugBrowserTitle">All Categories</span>
+        <button type="button" class="drug-browser-close" id="closeBrowserBtn" aria-label="Close medication list">✕ Close</button>
+      </div>
+      <div class="drug-list" id="drugList"></div>
+    </section>
+
     <!-- Medication Content Container -->
     <div id="cardContent" class="anim-fade">
       <!-- Drug Identity Hero -->
@@ -705,6 +821,7 @@
         <button class="btn" id="prevBtn" title="Previous Card (Left Arrow)" aria-label="Previous Medication">◀ Prev</button>
         <button class="btn" id="nextBtn" title="Next Card (Right Arrow)" aria-label="Next Medication">Next ▶</button>
         <button class="btn" id="randomBtn" title="Random Card (Spacebar)" aria-label="Random Medication">🎲 Shuffle</button>
+        <button class="btn" id="browseBtn" title="Browse medications in this category" aria-label="Browse medications" aria-expanded="false">☰ Browse</button>
       </div>
 
       <div class="footer-filter-group">
@@ -770,6 +887,9 @@
     const cardCounter = document.getElementById("cardCounter");
     const cardContent = document.getElementById("cardContent");
     const emptyState = document.getElementById("emptyState");
+    const drugBrowser = document.getElementById("drugBrowser");
+    const drugBrowserTitle = document.getElementById("drugBrowserTitle");
+    const drugList = document.getElementById("drugList");
 
     const btnKnow = document.getElementById("btnKnow");
     const btnReview = document.getElementById("btnReview");
@@ -788,6 +908,8 @@
     const prevBtn = document.getElementById("prevBtn");
     const nextBtn = document.getElementById("nextBtn");
     const randomBtn = document.getElementById("randomBtn");
+    const browseBtn = document.getElementById("browseBtn");
+    const closeBrowserBtn = document.getElementById("closeBrowserBtn");
     const searchInput = document.getElementById("searchInput");
 
     // Update Know / Review button UI state for current medication
@@ -863,6 +985,90 @@
       cardContent.classList.add("anim-fade");
     }
 
+    // Build the scrollable medication list for the active filters
+    function renderDrugBrowser() {
+      const selectedCategory = categoryFilter.value;
+      const statuses = getStudyStatuses();
+      const categoryName = selectedCategory === "ALL"
+        ? "All Categories"
+        : ((catDefs[selectedCategory] && catDefs[selectedCategory].label) || categoryFilter.options[categoryFilter.selectedIndex].text);
+
+      drugBrowserTitle.textContent = `${categoryName} · ${currentList.length} drug${currentList.length === 1 ? "" : "s"}`;
+      drugList.innerHTML = "";
+
+      if (currentList.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "drug-browser-empty";
+        empty.textContent = "No medications match the current filters.";
+        drugList.appendChild(empty);
+        return;
+      }
+
+      const sortedMeds = currentList
+        .map((med, index) => ({ med, index }))
+        .sort((a, b) => a.med.generic.localeCompare(b.med.generic));
+
+      sortedMeds.forEach(({ med, index }) => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "drug-list-item";
+        item.setAttribute("aria-label", `View ${med.generic}`);
+
+        const main = document.createElement("span");
+        main.className = "drug-list-main";
+
+        const name = document.createElement("span");
+        name.className = "drug-list-name";
+        name.textContent = med.generic;
+
+        const meta = document.createElement("span");
+        meta.className = "drug-list-meta";
+        const catLabel = (catDefs[med.category] && catDefs[med.category].label) || med.category;
+        meta.textContent = [med.brand, selectedCategory === "ALL" ? catLabel : med.drugClass].filter(Boolean).join(" · ");
+
+        const status = document.createElement("span");
+        status.className = "drug-list-status";
+        const medStatus = statuses[med.generic] || null;
+        status.textContent = medStatus === "know" ? "✓ Know" : medStatus === "review" ? "⟳ Review" : "›";
+
+        main.appendChild(name);
+        main.appendChild(meta);
+        item.appendChild(main);
+        item.appendChild(status);
+
+        item.addEventListener("click", () => {
+          closeDrugBrowser(false);
+          renderCard(index);
+        });
+
+        drugList.appendChild(item);
+      });
+    }
+
+    function openDrugBrowser() {
+      renderDrugBrowser();
+      drugBrowser.style.display = "block";
+      cardContent.style.display = "none";
+      emptyState.style.display = "none";
+      browseBtn.textContent = "✕ Close";
+      browseBtn.setAttribute("aria-expanded", "true");
+      btnKnow.disabled = true;
+      btnReview.disabled = true;
+    }
+
+    function closeDrugBrowser(renderCurrentCard = true) {
+      drugBrowser.style.display = "none";
+      browseBtn.textContent = "☰ Browse";
+      browseBtn.setAttribute("aria-expanded", "false");
+      btnKnow.disabled = false;
+      btnReview.disabled = false;
+      if (renderCurrentCard) renderCard(currentIndex);
+    }
+
+    function isDrugBrowserOpen() {
+      return drugBrowser.style.display === "block";
+    }
+
     // Filter Logic (combines Category + Study Status + Search Query)
     function applyFilters() {
       const selectedCategory = categoryFilter.value;
@@ -894,7 +1100,12 @@
       });
 
       currentIndex = 0;
-      renderCard(0);
+      if (isDrugBrowserOpen()) {
+        renderDrugBrowser();
+        cardCounter.textContent = currentList.length ? `1 / ${currentList.length}` : `0 / 0`;
+      } else {
+        renderCard(0);
+      }
     }
 
     // Toggle Study Status for Current Medication
@@ -939,7 +1150,15 @@
     nextBtn.addEventListener("click", nextCard);
     prevBtn.addEventListener("click", prevCard);
     randomBtn.addEventListener("click", randomCard);
-    categoryFilter.addEventListener("change", applyFilters);
+    browseBtn.addEventListener("click", () => {
+      if (isDrugBrowserOpen()) closeDrugBrowser();
+      else openDrugBrowser();
+    });
+    closeBrowserBtn.addEventListener("click", () => closeDrugBrowser());
+    categoryFilter.addEventListener("change", () => {
+      applyFilters();
+      openDrugBrowser();
+    });
     statusFilter.addEventListener("change", applyFilters);
     searchInput.addEventListener("input", applyFilters);
 
@@ -948,6 +1167,14 @@
 
     // Keyboard Shortcuts (Arrow keys & Space)
     document.addEventListener("keydown", (e) => {
+      if (isDrugBrowserOpen()) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeDrugBrowser();
+        }
+        return;
+      }
+
       if (document.activeElement === searchInput || 
           document.activeElement === categoryFilter || 
           document.activeElement === statusFilter) return;
@@ -973,6 +1200,7 @@
     }, { passive: true });
 
     widget.addEventListener("touchend", (e) => {
+      if (isDrugBrowserOpen()) return;
       touchEndX = e.changedTouches[0].screenX;
       if (touchEndX < touchStartX - 40) nextCard();
       else if (touchEndX > touchStartX + 40) prevCard();
