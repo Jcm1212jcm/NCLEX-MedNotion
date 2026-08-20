@@ -466,6 +466,18 @@ const MEDICATIONS = [
     trap: "<strong>Naloxone has a shorter half-life (~30–90 min) than morphine</strong>; repeat naloxone doses may be needed as opioid re-emerges."
   },
   {
+    generic: "Naloxone",
+    brand: "(Narcan)",
+    category: "gi",
+    drugClass: "Opioid Receptor Antagonist",
+    indication: "Emergency Reversal of Known or Suspected Opioid Overdose",
+    assess: "Assess <strong>responsiveness, respiratory effort, and airway</strong>. Give immediately for suspected opioid overdose and activate emergency response/EMS.",
+    monitor: "Continue <strong>respiratory and level-of-consciousness monitoring</strong>; respiratory/CNS depression can recur after an initial response.",
+    watch: "May precipitate <strong>acute opioid withdrawal</strong> in opioid-dependent patients (agitation, sweating, nausea/vomiting, tachycardia).",
+    antidote: null,
+    trap: "<strong>Naloxone may wear off before the opioid.</strong> Continue surveillance and give repeat doses as needed while awaiting emergency care; it does not replace resuscitation/EMS."
+  },
+  {
     generic: "Potassium Chloride (KCl)",
     brand: "(K-Dur, Micro-K)",
     category: "gi",
